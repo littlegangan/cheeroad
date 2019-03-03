@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>后台登录</title>
+  <link rel="stylesheet" href="__admin__/layui/css/layui.css">
+  <!-- 引入图标字体样式 -->
+  <link rel="stylesheet" href="__admin__/font/css/font-awesome.min.css">
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">ThinkPHP后台登录</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+
+      
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div class="layui-fluid">
+      
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>管理员登录</legend>
+      </fieldset>
+
+      
+      <form class="layui-form" action="" method="post">
+
+
+        <div class="layui-form-item layui-col-md3" style="margin-left: 25%">
+          <label class="layui-form-label">登录名</label>
+          <div class="layui-input-block">
+            <input type="text" name="username" placeholder="请输入帐名" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-form-item layui-col-md3" style="margin-left: 25%">
+          <label class="layui-form-label">登录密码</label>
+          <div class="layui-input-block" id="password">
+            <input type="text" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-form-item layui-col-md3" style="margin-left: 25%">
+          <label class="layui-form-label">验证码</label>
+          <div class="layui-input-block" id="code">
+            <input type="text" name="validateCode" placeholder="请输入验证码" autocomplete="off" class="layui-input">
+            {:captcha_img()}
+          </div>
+        </div>
+
+
+        <div class="layui-form-item" style="margin-left: 25%">
+          <div class="layui-input-block">
+            <button id="submit" class="layui-btn" lay-submit lay-filter="formDemo">登录</button>
+            <button type="reset" class="layui-btn layui-btn-primary">取消</button>
+          </div>
+        </div>
+
+
+      </form>
+      
+    </div>
+
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    
+  </div>
+</div>
+</body>
+</html>
+<script src="__admin__/layui/layui.all.js"></script>
+<script src="__admin__/js/jquery-3.3.1.min.js"></script>
+<script>
+//JavaScript代码区域
+
+var element, layer, laydate, layim, laypage, table, form, upload, laydit;
+
+    $(function(){
+
+        layui.use(['element', 'layer', 'laydate', 'layim', 'laypage', 'table', 'form', 'upload'], function(){
+              element = layui.element;
+              layer = layui.layer;
+              laydate = layui.laydate;
+              layim = layui.layim;
+              laypage = layui.laypage;
+              table = layui.table;
+              form = layui.form;
+              upload = layui.upload;
+        
+        });
+
+        $('#code img').click(function(){
+
+              var imgPath = $(this).attr('src');
+              //alert(imgPath);
+              var num = Math.round(Math.random()*10000);
+
+              var imgPath = imgPath + '?' + num;
+              //alert(imgPath);
+
+              $(this).attr('src', imgPath);
+
+
+        })
+
+
+
+
+    })
+
+</script>

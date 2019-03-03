@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="stylesheet" href="__admin__/layui/css/layui.css">
+  <!-- 引入图标字体样式 -->
+  <link rel="stylesheet" href="__admin__/font/css/font-awesome.min.css">
+
+</head>
+<body class="layui-layout-body">
+  
+  
+    <!-- 内容主体区域 -->
+    <div class="layui-fluid" style="margin-top: 20px">
+      	<form id="addForm" class="layui-form" action="" method="post">
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">登录名</label>
+				<div class="layui-input-block">
+					<input type="text" name="username" placeholder="请输入登录名" autocomplete="off" class="layui-input" lay-verify="required">
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">登录密码</label>
+				<div class="layui-input-block" id="password">
+					<input type="password" name="password" placeholder="请输入登录密码" autocomplete="off" class="layui-input" id="passwordInput">
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">确认密码</label>
+				<div class="layui-input-block" id="confirm">
+					<input type="password" name="confirm" placeholder="请再次输入密码" autocomplete="off" class="layui-input" id="confirmInput" onblur="check()">
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			    <label class="layui-form-label">性别</label>
+			    <div class="layui-input-block">
+
+			      <input name="sex" value="1" title="男" type="radio">
+			      <input name="sex" value="0" title="女" type="radio">
+			  
+			    </div>
+		  	</div>
+
+		  	<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">手机号码</label>
+				<div class="layui-input-block">
+					<input type="text" name="tel" id="tel" placeholder="" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" name="email" placeholder="" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item"  style="width: 450px">
+			    <label class="layui-form-label">角色</label>
+			    <div class="layui-input-block">
+
+			      <!-- <input name="role" value="1" title="超级管理员" type="radio">
+			      <input name="role" value="0" title="管理员" type="radio"> -->
+
+				  <select name="role">
+
+				  		<option value="">请选择</option>
+					  	<option value="1">超级管理员</option>
+					  	<option value="0">管理员</option>
+					  	
+				  </select>
+
+			  
+			    </div>
+		  	</div>
+
+		  	<!-- <div class="layui-form-item layui-col-md3" style="width: 400px">
+				<label class="layui-form-label">加入时间</label>
+				<div class="layui-input-block">
+					<input name="date" id="date" autocomplete="off" class="layui-input" type="text">
+				</div>
+			</div> -->
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">审核状态</label>
+				<div class="layui-input-block">
+					<input type="radio" name="status" value="1" title="已审核" checked>
+					<input type="radio" name="status" value="0" title="未审核">
+				</div>
+			</div>
+
+			<div class="layui-form-item" style="width: 550px">
+			  
+	           <label class="layui-form-label">短信验证码</label>
+
+	           <div class="layui-input-inline">
+	             <input type="text" name="validateCode" placeholder="请输入短信验证码" autocomplete="off" class="layui-input">
+	           </div>
+
+	           <div class="layui-input-inline">
+	             <input type="button" class="layui-btn getCode" value="获取短信验证码"></input>
+	           </div>
+
+	        </div> 
+
+		</form>
+   	</div>
+  
+<script src="__admin__/layui/layui.all.js"></script>
+<script src="__admin__/js/jquery-3.3.1.min.js"></script>
+<script>
+//JavaScript代码区域
+
+var element, layer, laydate, layim, laypage, table, form, upload, laydit;
+
+    $(function(){
+
+        layui.use(['element', 'layer', 'laydate', 'layim', 'laypage', 'table', 'form', 'upload'], function(){
+              element = layui.element;
+              layer = layui.layer;
+              laydate = layui.laydate;
+              layim = layui.layim;
+              laypage = layui.laypage;
+              table = layui.table;
+              form = layui.form;
+              upload = layui.upload;
+        
+        });
+
+        layui.use(['form', 'layedit', 'laydate'], function(){
+	          var form = layui.form
+	          ,layer = layui.layer
+	          ,layedit = layui.layedit
+	          ,laydate = layui.laydate;
+	          
+	          //日期
+	          laydate.render({
+	            elem: '#date'
+	          });
+	          
+	    });
+
+		//密码确认不一致消息弹出框
+		$('#confirm').on('blur', ':text', function(){
+
+			var password = $('#password').find('input').val();
+			var confirm =  $('#confirm').find('input').val();
+			if(password != confirm){
+				
+				layer.alert('您输入的密码不一致', {icon: 2});
+				$('#submit').addClass('layui-disabled');
+
+			}else{
+				$('#submit').removeClass('layui-disabled');
+			}
+
+		});
+
+		var sec = 3; //设置时间为3秒
+		var timer = 0; //定时器编号， 初始值为0
+		$('.getCode').click(function(){
+
+			var tel = $('#tel').val();
+			//alert(tel);
+			$.post(
+
+				'{:url("admin/ajax/sendSms")}',
+				{
+					'tel': tel
+				},
+				function(result){
+
+					if(result > 0){
+						parent.layer.msg('短信验证码发送成功，请注意查收', {icon: 1, time: 3000});
+					}else{
+						parent.layer.msg('短信验证码发送失败，请在60秒后再点击获取', {icon: 2, time: 3000});
+					}
+
+				}
+
+			);
+
+			//设置倒计时为3秒
+			timer = setInterval(function(){
+
+				sec--;
+				if(sec == 0){
+
+					clearInterval(timer); //关闭定时器
+					$('.getCode').attr('disabled', false).removeClass('layui-btn-disabled');
+					$('.getCode').val('获取短信验证码');
+					sec = 3;
+
+					return false;
+
+				}
+
+				$('.getCode').attr('disabled', true).addClass('layui-btn-disabled');
+				$('.getCode').val(sec + 's后重新获取验证码');
+
+
+			}, 1000)
+
+		})
+
+
+  	})
+
+    //js方式检查密码是否一致
+    function check(){
+
+    	var password = document.getElementById('passwordInput').value;
+    	var confirm = document.getElementById('confirmInput').value;
+    	if(password != confirm){
+				
+			layer.alert('您输入的密码不一致', {icon: 2});
+			$('#submit').addClass('layui-disabled');
+
+		}else{
+			$('#submit').removeClass('layui-disabled');
+		}
+
+    }
+
+
+
+</script>
+</body>
+</html>

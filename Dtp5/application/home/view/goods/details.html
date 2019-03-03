@@ -1,0 +1,324 @@
+{extend name="../application/home/view/layout.html" /}
+
+{block name="content"}
+
+	<div class="xiangqing">
+		<div class="neirong w">
+			<div class="xiaomi6 fl">{$goods['goods_name']}</div>
+			<nav class="fr">
+				<li><a href="">概述</a></li>
+				<li>|</li>
+				<li><a href="">变焦双摄</a></li>
+				<li>|</li>
+				<li><a href="">设计</a></li>
+				<li>|</li>
+				<li><a href="">参数</a></li>
+				<li>|</li>
+				<li><a href="">F码通道</a></li>
+				<li>|</li>
+				<li><a href="">用户评价</a></li>
+				<div class="clear"></div>
+			</nav>
+			<div class="clear"></div>
+		</div>	
+	</div>
+	
+	<div class="jieshao mt20 w">
+		<div class="left fl"><img src="__root__{$goods['goods_cover']}" width="560" height="475" style="cursor: crosshair;">
+		<ul>
+			{foreach $goods['goods_image'] as $value}
+			<li><img src="__root__{$value['img_url']}" width="140" height="85"></li>
+			
+			{/foreach}
+		</ul>
+
+		</div>
+	<form action="post" method="">
+		<div class="right fr">
+			<div class="h3 ml20 mt20">{$goods['goods_name']}</div>
+			<div class="jianjie mr40 ml20 mt10">变焦双摄，4 轴防抖 / 骁龙835 旗舰处理器，6GB 大内存，最大可选128GB 闪存 / 5.15" 护眼屏 / 四曲面玻璃/陶瓷机身</div>
+			<div class="jiage ml20 mt10">促销价&nbsp;￥：<span class="our_price"></span></div>
+			<!-- <div class="jiage ml20 mt10"><i>市场价&nbsp;￥：{$goods['market_price']}</i></div> -->
+			{foreach $specList as $value}
+			<div class="ft20 ml20 mt20">{$value['spec_name']}</div>
+			<div class="xzbb ml20 mt10 spec-item">
+				{foreach $value['goods_spec_item'] as $val}
+				{if in_array($val['id'], $specRule)}
+
+				<div class="banben fl">
+					
+					<!-- <a>	 -->
+						<input type="hidden" value="{$val['id']}">
+						<span>{$val['spec_item_name']}</span>
+						&nbsp;
+					<!-- </a> -->
+					
+				</div>
+				{/if}
+				{/foreach}
+
+				<div class="clear"></div>
+			</div>
+			{/foreach}
+			
+			<div class="xqxq mt20 ml20">
+				<div class="top1 mt10 inventory">
+					<!-- <div class="left1 fl"></div> -->
+					<input type="button" name="" class="minus" value="-" style="border: 1px solid red; width: 20px">&nbsp;&nbsp;
+					<input type="text" name="" class="nums" style="display: inline-block; width: 50px; border: 1px solid #bbb" value="1">&nbsp;&nbsp;
+					<input type="button" name="" class="add" value="+" style="border: 1px solid red; width: 20px">&nbsp;&nbsp;	
+					<!-- <div class="right1 fr inventory"> -->
+					库存：<span></span>件<!-- </div> -->				
+					<div class="clear"></div>
+				</div>
+				<!-- <div class="bot mt20 ft20 ftbc totalPrice">总计：</div> -->
+			</div>
+			<div class="xiadan ml20 mt20">
+					<input class="jrgwc"  type="button" name="jrgwc" value="立即选购" />
+					<input class="jrgwc" type="button" name="jrgwc" value="加入购物车" />				
+			</div>
+		</div>
+	</form>
+		<div class="clear"></div>
+	</div>
+	<br><br><br><br><br><br><br><br>
+
+	<div class="xiangqing">
+		<div class="neirong w">
+			<div class="xiaomi6 fl">商品详情</div>
+			<nav class="fr">
+				<li><a href="">概述</a></li>
+				<li>|</li>
+				<li><a href="">变焦双摄</a></li>
+				<li>|</li>
+				<li><a href="">设计</a></li>
+				<li>|</li>
+				<li><a href="">参数</a></li>
+				<li>|</li>
+				<li><a href="">F码通道</a></li>
+				<li>|</li>
+				<li><a href="">用户评价</a></li>
+				<div class="clear"></div>
+			</nav>
+			{:htmlspecialchars_decode($goods['goods_details'])}
+			<div class="clear"></div>
+
+		</div>	
+	</div>
+
+	
+
+{/block}
+
+{block name="js"}
+
+<script type="text/javascript">
+
+	$(function(){
+
+		//获取商品id
+		var goodsId = {$goods['id']};
+
+		//获取商品裸价（未加规格价格）
+		var goodsPrice = parseInt({$goods['our_price']});
+
+		//商品规格价格
+		var specPrice = 0;
+
+		//商品单价
+		var perPrice = 0;
+
+		//商品规格描述
+		var specDesc = '';
+
+		var specRule = '';
+		$('.spec-item').each(function(i, obj){
+
+			specRule += '_' + $(obj).find('input:first').val();
+			$(obj).find('input:first').addClass('selected');
+			$(obj).find('input:first').siblings('span').css('color','red');	
+
+		})
+		specRule = specRule.substr(1);
+
+		$.ajax({
+
+			url: "{:url('ajax/getSpecPrice')}",
+			type: 'post',
+			dataType: 'json',
+			data: {
+				'goods_id': goodsId,
+				'spec_rule': specRule,
+			},
+			success: function(data){
+
+				specPrice = parseInt(data.spec_price);
+				specDesc = data.spec_desc;
+				perPrice = parseInt(goodsPrice + specPrice);
+				$('.our_price').text(perPrice);
+				$('.inventory span').text(data.spec_inventory);
+
+			}
+
+
+		})
+
+		//切换规格项显示对应的总价格
+		$('.spec-item .banben').click(function(){
+			var specRuleChanged = '';
+			$(this).parent().find('span').removeAttr('style');
+			$(this).parent().find('input').removeClass();
+			$(this).find('span').css('color', 'red');
+			$(this).find('span').siblings('input').addClass('selected');
+			$('.spec-item').each(function(i, obj){
+
+				specRuleChanged += '_' + $(obj).find('input[class="selected"]').val();
+
+
+			})
+			specRuleChanged = specRuleChanged.substr(1);
+			//赋值给默认规格规则
+			specRule = specRuleChanged;
+			//console.log(specRuleChanged);
+			$.ajax({
+
+			url: "{:url('ajax/getSpecPrice')}",
+			type: 'post',
+			dataType: 'json',
+			data: {
+				'goods_id': goodsId,
+				'spec_rule': specRuleChanged,
+			},
+			success: function(data){
+
+				specPrice = parseInt(data.spec_price);
+				specDesc = data.spec_desc;
+				perPrice = parseInt(goodsPrice + specPrice);
+				$('.our_price').text(perPrice);
+				$('.inventory span').text(data.spec_inventory);
+
+				//切换规格项，购买数量强制变成默认数量1
+				$('.nums').val(1);
+			}
+
+
+			})
+
+		})
+
+		//改变购买数量
+		//减少
+		$('.inventory .minus').click(function(){
+			perPrice = parseInt(goodsPrice + specPrice);
+			var nums = parseInt($('.nums').val());
+			nums--;
+			if(nums >= 1){
+				$('.nums').val(nums);
+				//var ourPrice = $('.our_price').text();
+				var totalPrice = nums * perPrice;
+				$('.our_price').text(totalPrice);
+
+
+			}else{
+				$('.nums').val(1);
+			}
+
+
+		})
+		//增加
+		$('.inventory .add').click(function(){
+			perPrice = parseInt(goodsPrice + specPrice);
+			var inventory = $('.inventory span').text();
+			var nums = $('.nums').val();
+			nums++;
+			if(nums >= 0 && nums <= inventory){
+				$('.nums').val(nums);
+				//var ourPrice = $('.our_price').text();
+				var totalPrice = nums * perPrice;
+				$('.our_price').text(totalPrice);
+			}else{
+				alert('库存不足');
+			}
+
+
+		})
+
+		//购买数量手动输入
+		$('.nums').keyup(function(){
+
+			var nums = $('.nums').val();
+			var inventory = parseInt($('.inventory span').text());
+			//alert(nums);
+
+			//手动输入小于1
+			if(parseInt(nums) < 1){
+
+				$('.nums').val(1);
+
+
+			}
+
+			//手动输入大于库存
+			if(parseInt(nums) > inventory){
+
+				$('.nums').val(inventory);
+				alert('库存不足');
+
+			}
+
+			//判断输入的内容是否是非数字
+			if(isNaN(nums)){
+				$('.nums').val(1);
+			}
+
+			perPrice = parseInt(goodsPrice + specPrice);
+			var totalPrice = $('.nums').val() * perPrice;
+
+			$('.our_price').text(totalPrice);
+		})
+
+
+		//购物车实现
+		$('.jrgwc').click(function(){
+
+			//购买数量
+			nums = $('.nums').val();
+
+			//商品总价格
+			var totalPrice = $('.our_price').text(); 
+
+
+			$.post({
+
+				url: '{:url("ajax/addToCart")}',
+				data: {
+
+					'goods_id': goodsId,					
+					'nums': nums,
+					'per_price': perPrice,
+					'total_price': totalPrice,
+					'spec_rule': specRule,
+					'spec_desc': specDesc,
+
+				},
+				success: function(res){
+
+					if(res >= 0){
+						layer.msg('成功加入购物车', {icon: 1, time: 2000});
+					}else{
+						layer.msg('加入购物车失败', {icon: 5, time: 2000});
+					}
+
+				}
+
+
+			})
+
+
+		})
+
+	})
+
+</script>
+
+{/block}

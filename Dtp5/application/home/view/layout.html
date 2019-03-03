@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="author" content="order by dede58.com"/>
+		<title>百乐汇商城</title>
+		<link rel="stylesheet" type="text/css" href="__home__/css/style.css">
+		<link rel="stylesheet" href="__admin__/layui/css/layui.css">
+
+	</head>
+	<body>
+		
+	<!-- start header -->
+	<header>
+		<div class="top center">
+			<div class="left fl">
+				<ul>
+					<li><a href="{:url('index/index')}" target="_blank">百乐汇商城</a></li>
+					<li>|</li>
+					
+					<li><a href="">游戏</a></li>
+					<li>|</li>
+					<li><a href="">多看阅读</a></li>
+					<li>|</li>
+					<li><a href="">云服务</a></li>
+					<li>|</li>
+					<li><a href="">金融</a></li>
+					<li>|</li>
+					<li><a href="">百乐汇商城移动版</a></li>
+					<li>|</li>
+					<li><a href="">问题反馈</a></li>
+					<li>|</li>
+					<li><a href="">选择国家/地区</a></li>
+					<div class="clear"></div>
+				</ul>
+			</div>
+			<div class="right fr">
+				<div class="gouwuche fr"><a href="{:url('cart/cartLists')}">购物车</a></div>
+				<div class="fr">
+					<ul>
+						<li><a href="{:url('member/login')}" target="_blank">{:empty($username)?'登录':$username}</a></li>
+						<li>|</li>
+						<li><a href="./register.html" target="_blank" >注册</a></li>
+						<li>|</li>
+						<li><a href="{:url('member/selfInfo')}">个人中心</a></li>
+					</ul>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</header>
+	<!--end header -->
+
+	<!-- start banner -->
+	<div class="banner_x center">
+		<a href="./index.html" target="_blank"><div class="logo fl"></div></a>
+		<a href=""><div class="ad_top fl"></div></a>
+		<div class="nav fl">
+			<ul>
+				{foreach $middleNav as $value}
+				<li><a href="{:url($value['url'])}" target="_blank">{$value['title']}</a></li>
+				{/foreach}
+				
+			</ul>
+		</div>
+		<div class="search fr">
+			<form action="" method="post">
+				<div class="text fl">
+					<input type="text" class="shuru"  placeholder="iPhone Xs Max">
+				</div>
+				<div class="submit fl">
+					<input type="submit" class="sousuo" value="搜索"/>
+				</div>
+				<div class="clear"></div>
+			</form>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<!-- end banner -->	
+
+	<!-- content -->
+	{block name="content"}
+	{/block}
+
+	<!-- start footer -->
+	
+	<!-- end footer -->	
+	</body>
+</html>
+
+<script src="__admin__/layui/layui.all.js"></script>
+<script src="__admin__/js/jquery-3.3.1.min.js"></script>
+<script>
+//JavaScript代码区域
+
+var element, layer, laydate, layim, laypage, table, form, upload, laydit;
+
+    $(function(){
+
+        layui.use(['element', 'layer', 'laydate', 'layim', 'laypage', 'table', 'form', 'upload'], function(){
+              element = layui.element;
+              layer = layui.layer;
+              laydate = layui.laydate;
+              layim = layui.layim;
+              laypage = layui.laypage;
+              table = layui.table;
+              form = layui.form;
+              upload = layui.upload;
+        
+        });
+
+
+  	})
+
+</script>
+{block name="js"}
+
+
+{/block}

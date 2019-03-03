@@ -1,0 +1,394 @@
+{extend name="../application/admin/view/layout.html"}
+
+{block name="content"}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend>管理员列表</legend>
+</fieldset>
+
+
+<div class="layui-row layui-form">
+
+	<div class="layui-col-md11" id="search"> 
+		<div class="layui-inline">
+	    	<input class="layui-input" name="id" id="demoReload" autocomplete="off">
+	  	</div>
+	  	<button class="layui-btn" data-type="reload" id="search-btn">搜索</button>
+		
+	</div>
+	<div class="layui-col-md1">
+	    <div class="layui-inline" style="float: right">
+	    	<!-- 传统跳转页面方式添加管理员 -->
+			<!-- <a class="layui-btn layui-btn-ls" href="{:url('add')}" lay-event="edit">添加</a> -->
+			<!-- 弹出层页面添加管理员 -->
+      		<a class="layui-btn layui-btn-ls" id="add-btn" lay-event="edit">添加</a>
+	    </div>
+	</div>     
+
+</div>
+
+
+<table class="layui-table layui-form">
+  
+  <thead>
+    <tr>
+      <th>登录名</th>
+      <th width="50">性别</th>
+      <th>手机</th>
+      <th>邮箱</th>
+      <th>角色</th>
+      <th>审核状态</th>
+      <th>加入时间</th>
+      <th width="200">操作</th>
+    </tr> 
+  </thead>
+  <tbody>
+	{foreach $adminList['data'] as $value}
+    <tr>
+      <td>{$value['username']}</td>
+      <td>{$value['sex']==1?'男':'女'}</td>
+      <td>{$value['tel']}</td>
+      <td>{$value['email']}</td>
+      <td>{$value['role']==1?'超级管理员':'管理员'}</td>
+      <td>{$value['status']==1?'<button class="layui-btn layui-btn-xs">已审核</button>':'<button class="layui-btn layui-btn-primary layui-btn-xs">未审核</button>'}</td>
+      <td>{$value['date']}</td>
+      <td>
+
+		<!-- <a href="{:url('edit', ['id' => $value['id']])}" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a> -->
+		<!-- 弹出层方式编辑管理员 -->
+		<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id="{$value['id']}"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+		<a class="layui-btn layui-btn-danger {$value['role']==1?'layui-btn-disabled':''} layui-btn-xs" id="{$value['id']}" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+
+      </td>
+   	</tr>
+   {/foreach}
+   
+  </tbody>
+  
+</table>
+<div class="pages">
+
+  <!-- 分页 -->
+  {$pages|raw}
+
+</div>
+
+{/block}
+
+{block name="js"}
+
+  <script>
+
+
+      $(function(){
+
+        //删除管理员
+        $('.layui-btn-danger').click(function(){
+
+            var id = $(this).attr('id');
+
+            //alert(id);
+
+            //如果不是超级管理员
+            if(id != 1){
+
+              layer.confirm('您确定要删除吗？', {icon: 3, title:'提示'}, function(index){
+                  //do something
+                  //window.location = 'del/id/' + id;
+
+                  $.ajax({
+
+                  	url: 'del/id/' + id,
+                  	type: 'post',
+
+                  	success: function(result){
+
+                  		if(result > 0){
+
+                  			layer.msg('删除成功', {icon: 1, time: 4000});
+	             			//设置提示框消失过后1秒刷新页面
+	             			setInterval("window.location.reload()", 1000);
+
+                  		}else{
+                  			layer.msg('删除失败', {icon: 2, time: 3000});
+                  		}
+
+                  	}
+
+
+                  });
+
+
+                
+                  //关闭弹出层
+                  layer.close(index);
+              });
+
+            }
+
+            // layer.open({
+            //   type: 1,
+            //   shade: false,
+            //   title: false, //不显示标题
+            //   skin: 'layui-layer-demo', //样式类名
+            //   area: ['600px', '600px'], //宽高
+            //   closeBtn: 1, //显示关闭按钮
+            //   anim: 2,
+            //   shadeClose: true, //开启遮罩关闭
+            //   content: '{:url('edit')}'
+            // });
+
+        });
+
+        //搜索管理员
+        $('#search').on('click', '#search-btn', function(){
+
+          var username = $('#search').find('input').val();
+
+          //alert(username);
+          $.ajax({
+
+            url: "{:url('admin/search')}",
+            type: 'post',
+            data: {
+              'username': username,
+            },
+
+            success: function(result){
+
+              $('tbody').html(result);
+              $('.pages').html('');//隐藏分页
+
+            }
+
+          });
+
+        });
+
+
+        //弹出层方式添加管理员
+        $('#add-btn').click(function(){
+
+			   layer.open({
+
+              type: 2,
+              title: '添加管理员',
+              btn:['提交','取消'],
+              skin: '', //样式类名
+              shadeClose: true,
+              shade: 0.8,
+              area: ['500px', '600px'],
+              content: 'popAdd/', //iframe的url
+			        btn1:function(index, layero){
+
+           		  var form = $(layero).find("iframe")[0].contentWindow.document.getElementById("addForm");
+
+  				      var dataForm = new FormData(form);//表单对象必须是原生js对象
+
+                //console.log(dataForm);
+  				      //console.log(dataForm.get('username'));
+  	             $.ajax({
+  	             	url:'{:url("popAdd")}',
+  	             	type:'post', 
+  	             	data:dataForm,
+  	             	async: false,
+  	             	processData: false,
+  	                contentType: false,
+  	             	success:function(row){
+  	             		//console.log(row);
+  	             		if(row > 0){ 	             			
+  	             			layer.close(index); 
+  	             			window.location.reload(); 
+  	             			layer.msg('添加成功', {icon: 1, time: 3000});
+  	             		}else{
+  	             			layer.msg('添加失败');
+  	             		}
+  	             		
+
+  	             	}
+
+  	             })
+               	//window.location.reload();
+      			    //do something
+      			    // layer.close(index); //如果设定了yes回调，需进行手工关闭
+			        },
+      			  btn2:function(index, layero){
+
+                    }
+              });
+
+         });
+
+        //弹出层方式编辑管理员
+        $('.layui-btn-normal').click(function(){
+
+        	var _id = $(this).attr('id');
+        	//alert(_id);
+
+        	layer.open({
+
+              type: 2,
+              title: '编辑管理员',
+              btn:['提交','取消'],
+              skin: '', //样式类名
+              shadeClose: true,
+              shade: 0.8,
+              area: ['450px', '500px'],
+              content: 'popEdit/id/'+_id, //iframe的url
+			  btn1:function(index, layero){
+         		 var form = $(layero).find("iframe")[0].contentWindow.document.getElementById("editForm");
+              
+				 var dataForm = new FormData(form);//表单对象必须是原生js对象
+
+				 //console.log(dataForm.get('username'));
+				 
+	             $.ajax({
+	             	url:'popEdit/id/' + _id,
+	             	type:'post', 
+	             	data:dataForm,
+	             	processData: false,
+	                contentType: false,
+	             	success:function(row){
+	             		//console.log(row);
+	             		if(row >= 0){	                    
+	             			layer.close(index);
+	             			//提示框显示4秒钟
+	             			layer.msg('编辑成功', {icon: 1, time: 4000});
+	             			//设置提示框消失后1秒刷新页面
+	             			setInterval("window.location.reload()", 1000);
+	             			//window.location.reload();
+	             		}else{
+	             			layer.msg('编辑失败');
+	             		}
+	             	}
+	             })
+               
+               	// console.log($('.testForm').serialize());
+			    //do something
+			    // layer.close(index); //如果设定了yes回调，需进行手工关闭
+			  },
+			  btn2:function(index, layero){
+
+              }
+            });
+
+
+
+
+        });
+
+
+      })
+
+	  //搜索之后用js方式解决点击删除按钮无响应的问题
+      function confirmDel(_id){
+
+          var id = _id;
+
+          //console.log(id);
+          // layer.confirm('您确定要删除吗？', {icon: 3, title:'提示'}, function(index){
+          //         //do something
+          //         window.location = 'del/id/' + id;
+                
+          //         //关闭弹出层
+          //         layer.close(index);
+          // });
+
+          	//如果不是超级管理员
+	        if(id != 1){
+
+	          layer.confirm('您确定要删除吗？', {icon: 3, title:'提示'}, function(index){
+	              //do something
+	              //window.location = 'del/id/' + id;
+
+	              $.ajax({
+
+	              	url: 'del/id/' + id,
+	              	type: 'post',
+
+	              	success: function(result){
+
+	              		if(result > 0){
+
+	              			layer.msg('删除成功', {icon: 1, time: 4000});
+	             			//设置提示框消失后1秒刷新页面
+	             			setInterval("window.location.reload()", 1000);
+
+	              		}else{
+	              			layer.msg('删除失败', {icon: 2, time: 3000});
+	              		}
+
+	              	}
+
+
+	              });
+            
+	              //关闭弹出层
+	              layer.close(index);
+	          });
+
+	        }
+
+      }
+
+      //搜索之后用js方式解决点击编辑按钮弹出层无响应的问题
+      function editByPop(_id){
+
+      	var id = _id;
+      	//alert(id);
+
+      	layer.open({
+
+              type: 2,
+              title: '编辑管理员',
+              btn:['提交','取消'],
+              skin: '', //样式类名
+              shadeClose: true,
+              shade: 0.8,
+              area: ['450px', '500px'],
+              content: 'popEdit/id/'+_id, //iframe的url
+			  btn1:function(index, layero){
+         		 var form = $(layero).find("iframe")[0].contentWindow.document.getElementById("editForm");
+              
+				 var dataForm = new FormData(form);//表单对象必须是原生js对象
+
+				 //console.log(dataForm.get('username'));
+				 
+	             $.ajax({
+	             	url:'popEdit/id/' + _id,
+	             	type:'post', 
+	             	data:dataForm,
+	             	processData: false,
+	                contentType: false,
+	             	success:function(row){
+	             		//console.log(row);
+	             		if(row >= 0){	                    
+	             			layer.close(index);
+	             			//提示框显示4秒钟
+	             			layer.msg('编辑成功', {icon: 1, time: 4000});
+	             			//设置提示框消失后1秒刷新页面
+	             			setInterval("window.location.reload()", 1000);
+	             			//window.location.reload();
+	             		}else{
+	             			layer.msg('编辑失败');
+	             		}
+	             	}
+	             })
+               
+               	// console.log($('.testForm').serialize());
+			    //do something
+			    // layer.close(index); //如果设定了yes回调，需进行手工关闭
+			  },
+			  btn2:function(index, layero){
+
+              }
+            });
+
+
+      }
+
+
+
+  </script>
+
+{/block}

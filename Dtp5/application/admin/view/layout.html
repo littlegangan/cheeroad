@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>后台</title>
+  <link rel="stylesheet" href="__admin__/layui/css/layui.css">
+  <!-- 引入图标字体样式 -->
+  <link rel="stylesheet" href="__admin__/font/css/font-awesome.min.css">
+
+  {block name="css"}{/block}
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">ThinkPHP</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+
+      {foreach $topNav as $value}
+      <li class="layui-nav-item top_nav" id="{$value['id']}"><a href="javascript:;">{$value['title']}</a></li>
+      {/foreach}
+      
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="__admin__/head.jpg" class="layui-nav-img">
+          {$_SESSION['admin']['usename']}
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="{:url('admin/out')}">退出</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <!-- <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">所有商品</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">列表一</a></dd>
+            <dd><a href="javascript:;">列表二</a></dd>
+            <dd><a href="javascript:;">列表三</a></dd>
+            <dd><a href="">超链接</a></dd>
+          </dl>
+        </li> -->
+        
+        {foreach $leftNav as $value}
+          
+            {if in_array($value['id'], $rules)}
+            <li class="layui-nav-item layui-nav-itemed">
+              <a class="" href="javascript:;">{$value['title']}</a>
+              <dl class="layui-nav-child">
+
+                {foreach $value['_data'] as $val}
+                    {if in_array($val['id'], $rules)}
+
+                    <!-- <dd><a href="{:url($val['url'])}">{$val['title']}</a></dd> -->
+                    <dd><a href="{:url($val['url'], ['pid' => $pid])}">{$val['title']}</a></dd>
+                    
+                    {/if}            
+                {/foreach}
+
+              </dl>
+            </li>
+            {/if}
+
+        {/foreach}
+
+
+        <!-- <li class="layui-nav-item">
+          <a href="javascript:;">解决方案</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">列表一</a></dd>
+            <dd><a href="javascript:;">列表二</a></dd>
+            <dd><a href="">超链接</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="">云市场</a></li>
+        <li class="layui-nav-item"><a href="">发布商品</a></li> -->
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div class="layui-fluid">
+      {block name="content"}{/block}
+    </div>
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    
+  </div>
+</div>
+<script src="__admin__/layui/layui.all.js"></script>
+<script src="__admin__/js/jquery-3.3.1.min.js"></script>
+<script>
+//JavaScript代码区域
+
+var element, layer, laydate, layim, laypage, table, form, upload, laydit;
+
+    $(function(){
+
+        layui.use(['element', 'layer', 'laydate', 'layim', 'laypage', 'table', 'form', 'upload'], function(){
+              element = layui.element;
+              layer = layui.layer;
+              laydate = layui.laydate;
+              layim = layui.layim;
+              laypage = layui.laypage;
+              table = layui.table;
+              form = layui.form;
+              upload = layui.upload;
+        
+        });
+
+        //显示左边导航数据
+        $('.top_nav').click(function(){
+            var _id = $(this).attr('id');
+            //alert(id);
+            $.get(
+
+                "{:url('ajax/getLeftNav')}", //请求地址
+                {
+                  'pid': _id
+                }, //要传送的数据
+                function(_data){    //回调函数
+
+                  //console.log(_data);
+                  $('.layui-nav-tree').html(_data);
+
+                }
+
+              )
+
+        })
+
+        //左边导航折叠
+        // $('.layui-nav-tree').on('click', '.layui-nav-itemed', function(){
+
+        //     //alert();
+        //     //toggle()自动判断当前标签是否展开或折叠
+        //     $(this).find('dl').toggle();
+
+        // })
+
+
+  })
+
+</script>
+</body>
+</html>
+{block name="js"}{/block}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="stylesheet" href="__admin__/layui/css/layui.css">
+  <!-- 引入图标字体样式 -->
+  <link rel="stylesheet" href="__admin__/font/css/font-awesome.min.css">
+
+</head>
+<body class="layui-layout-body">
+  
+  
+    <!-- 内容主体区域 -->
+    <div class="layui-fluid" style="margin-top: 20px">
+      	<form id="addForm" class="layui-form" action="" method="post" enctype="multipart/form-data">
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">品牌名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="brand_name" placeholder="请输入品牌名称" autocomplete="off" class="layui-input" lay-verify="required">
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">LOGO</label>
+				<div class="layui-input-block">
+					<!-- <input type="text" name="logo" autocomplete="off" class="layui-input"> -->
+					<button type="button" class="layui-btn layui-btn-danger" id="upload_img"><i class="layui-icon"></i>上传图片</button>
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">链接网址</label>
+				<div class="layui-input-block" id="confirm">
+					<input type="text" name="www" placeholder="请输入网址" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			    <label class="layui-form-label">状态</label>
+			    <div class="layui-input-block">
+
+			      <input name="is_show" value="1" title="显示" type="radio">
+			      <input name="is_show" value="0" title="隐藏" type="radio">
+			  
+			    </div>
+		  	</div>
+
+		</form>
+   	</div>
+  
+<script src="__admin__/layui/layui.all.js"></script>
+<script src="__admin__/js/jquery-3.3.1.min.js"></script>
+<script>
+//JavaScript代码区域
+
+var element, layer, laydate, layim, laypage, table, form, upload, laydit;
+
+    $(function(){
+
+        layui.use(['element', 'layer', 'laydate', 'layim', 'laypage', 'table', 'form', 'upload'], function(){
+              element = layui.element;
+              layer = layui.layer;
+              laydate = layui.laydate;
+              layim = layui.layim;
+              laypage = layui.laypage;
+              table = layui.table;
+              form = layui.form;
+              upload = layui.upload; //上传控件
+        
+        });
+
+        layui.use(['form', 'layedit', 'laydate'], function(){
+	          var form = layui.form
+	          ,layer = layui.layer
+	          ,layedit = layui.layedit
+	          ,laydate = layui.laydate;
+	          
+	          //日期
+	          laydate.render({
+	            elem: '#date'
+	          });
+	          
+	    });
+
+	    //设定文件大小限制
+		  upload.render({
+		    elem: '#upload_img'
+		    ,url: '{:url("ajax/upload")}'
+		    ,size: 2048 //限制文件大小，单位 KB
+		    ,done: function(res){
+		      console.log(res)
+
+		      layer.msg('品牌图片上传成功', {icon: 1, time: 3000});
+
+		    }
+		    ,error: function(res){
+
+		      layer.msg(res, {icon: 2, time: 3000});
+		    }
+		  });
+
+
+  	})
+
+
+
+
+</script>
+</body>
+</html>

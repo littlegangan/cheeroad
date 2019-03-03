@@ -1,0 +1,139 @@
+{extend name="../application/admin/view/layout.html"}
+
+{block name="content"}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend>角色添加</legend>
+</fieldset>
+
+<form class="layui-form" action="" method="post">
+
+	<div class="layui-form-item layui-col-md3">
+		<label class="layui-form-label">角色名称</label>
+		<div class="layui-input-block">
+			<input type="text" name="title" placeholder="请输入角色名称" autocomplete="off" class="layui-input" lay-verify="required">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">权限规则组</label>
+		{foreach $list as $value}
+		<!-- 第一级 -->
+		<div class="layui-input-block first-level">
+
+			<span class="layui-badge layui-bg-blue shrink">-</span>
+			<input name="rules[]" value="{$value['id']}" title="{$value['title']}" type="checkbox" lay-skin="primary" lay-filter="parent">
+
+			{foreach $value['_data'] as $val}
+			<!-- 第二级 -->
+			<div class="layui-row second-level" style="padding-left: 35px">
+
+				<span class="layui-badge layui-bg-blue shrink">-</span>
+				<input name="rules[]" value="{$val['id']}" title="{$val['title']}" type="checkbox" lay-skin="primary" lay-filter="parent">
+				
+				<!-- 第三级 -->
+				<div class="layui-row third-level" style="padding-left: 35px">
+				{foreach $val['_data'] as $va}	
+					<input name="rules[]" value="{$va['id']}" title="{$va['title']}" type="checkbox" lay-skin="primary" lay-filter="child">
+				{/foreach}				
+				</div>
+				
+			</div>
+			{/foreach}
+		</div>
+		{/foreach}
+	</div>
+	
+	<div class="layui-form-item">
+	    <label class="layui-form-label">状态</label>
+	    <div class="layui-input-block">
+
+	      <input name="status" value="1" title="启用" type="radio">
+	      <input name="status" value="0" title="禁用" type="radio">
+	  
+	    </div>
+  	</div>
+	
+	<div class="layui-form-item">
+		<div class="layui-input-block">
+			<button id="submit" class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+			<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		</div>
+	</div>
+</form>
+
+{/block}
+
+{block name="js"}
+
+	<script type="text/javascript">
+
+		$(function(){
+			//实现权限组选项收缩展开
+			$('.shrink').click(function(){
+
+				var text = $(this).text();
+
+				//alert(text);
+				if(text == '-'){
+
+					$(this).text('+');
+					
+				}else{
+
+					$(this).text('-');
+
+				}
+				//抓取同级标签，toggle()实现收缩展开
+				$(this).siblings('.layui-row').toggle();
+
+
+			});
+
+			//实现父级选中其所有子级选中
+			form.on('checkbox(parent)', function(data){
+
+				//console.log(data.othis);
+				
+				data.othis.parent().siblings('input').prop('checked', data.elem.checked);
+
+				data.othis.siblings('.layui-row').find(':checkbox').prop('checked', data.elem.checked);
+				//重新渲染
+				form.render();
+
+
+			})
+
+			//实现子级选中其所属父级全部选中
+			form.on('checkbox(child)', function(data){
+
+				var len = data.othis.parent().find(':checkbox:checked').length;
+
+				//console.log(len);
+				// var len_1 = data.othis.parent().find(':checkbox:checked').length;
+				// console.log(len_1);
+
+				if(len > 0){
+					//console.log(data.othis.parent().siblings('input'));
+					data.othis.parent().siblings('input').prop('checked', true);
+					data.othis.parent().parent().siblings('input').prop('checked', true);
+				}else{
+					
+					data.othis.parent().siblings('input').prop('checked', false);
+					
+					data.othis.parent().parent().siblings('input').prop('checked', false);
+				}
+
+				form.render();
+			})
+
+
+		})
+
+
+
+	</script>
+	
+
+
+{/block}

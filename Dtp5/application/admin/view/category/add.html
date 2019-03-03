@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="stylesheet" href="__admin__/layui/css/layui.css">
+  <!-- 引入图标字体样式 -->
+  <link rel="stylesheet" href="__admin__/font/css/font-awesome.min.css">
+
+  <style>
+
+	  .layui-form-select dl{max-height: 100px}
+
+  </style>
+
+
+</head>
+<body class="layui-layout-body">
+  
+  
+    <!-- 内容主体区域 -->
+    <div class="layui-fluid" style="margin-top: 20px">
+      	<form id="addForm" class="layui-form" action="" method="post">
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">商品分类名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="cate_name" placeholder="请输入商品分类名称" autocomplete="off" class="layui-input" lay-verify="required">
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">分类名称所属</label>
+				<div class="layui-input-block">
+					<select name="pid" lay-filter="cate">
+
+						<option value="0">顶级分类</option>
+						<!-- 一级分类数据循环 -->
+						{foreach $cate as $value}
+							<option path="{$value['parent_path']}" value="{$value['id']}">{$value['cate_name']}</option>
+							<!-- 二级分类数据循环 -->
+								{foreach $value['_data'] as $val}
+									<option path="{$val['parent_path']}" value="{$val['id']}">{$val['_html']}{$val['cate_name']}</option>
+								{/foreach}
+						{/foreach}
+						
+					</select>
+				</div>
+				<input id="hiddenPath" type="hidden" name="parent_path">
+			</div>
+
+			<div class="layui-form-item layui-col-md3" style="width: 450px">
+				<label class="layui-form-label">分类等级</label>
+				<div class="layui-input-block">
+					<select lay-filter="level">
+						<option value="1">一级</option>
+						<option value="2">二级</option>
+						<option value="3">三级</option>
+					</select>
+				</div>
+				<input id="hiddenLevel" type="hidden" name="level">
+			</div>
+			
+			<div class="layui-form-item">
+			    <label class="layui-form-label">状态</label>
+			    <div class="layui-input-block">
+
+			      <input name="status" value="1" title="启用" type="radio">
+			      <input name="status" value="0" title="禁用" type="radio">
+			  
+			    </div>
+		  	</div>
+
+		</form>
+   	</div>
+  
+<script src="__admin__/layui/layui.all.js"></script>
+<script src="__admin__/js/jquery-3.3.1.min.js"></script>
+<script>
+//JavaScript代码区域
+
+var element, layer, laydate, layim, laypage, table, form, upload, laydit;
+
+    $(function(){
+
+        layui.use(['element', 'layer', 'laydate', 'layim', 'laypage', 'table', 'form', 'upload'], function(){
+              element = layui.element;
+              layer = layui.layer;
+              laydate = layui.laydate;
+              layim = layui.layim;
+              laypage = layui.laypage;
+              table = layui.table;
+              form = layui.form;
+              upload = layui.upload; //上传控件
+        
+        });
+
+        layui.use(['form', 'layedit', 'laydate'], function(){
+	          var form = layui.form
+	          ,layer = layui.layer
+	          ,layedit = layui.layedit
+	          ,laydate = layui.laydate;
+	          
+	          //日期
+	          laydate.render({
+	            elem: '#date'
+	          });
+	          
+	    });
+
+	    form.on('select(cate)', function(data){
+
+	    	if(!data.elem.selectedIndex){
+	    		return false;
+	    	}
+	    	var parentPath = data.elem[data.elem.selectedIndex].attributes['path'].value;
+
+	    	//console.log(data.elem);
+	    	$('#hiddenPath').val(parentPath);
+
+	    })
+
+	    form.on('select(level)', function(data){
+
+	    	var level = data.elem[data.elem.selectedIndex].value;
+	    	$('#hiddenLevel').val(level);
+
+	    })
+
+
+  	})
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{extend name="../application/home/view/layout.html" /}
+
+{block name="content"}
+
+<div class="danpin center">
+			
+	<div class="biaoti center">手机</div>
+	<div class="main center">
+		{foreach $goodsList as $value}
+		<div class="mingxing fl mb20" style="border:2px solid #fff;width:230px;cursor:pointer;" onmouseout="this.style.border='2px solid #fff'" onmousemove="this.style.border='2px solid red'">
+			<div class="sub_mingxing"><a href="{:url('details', ['id' => $value['id']])}" target="_blank"><img src="__root__{$value['goods_cover']}" alt=""></a></div>
+			<div class="pinpai"><a href="{:url('details', ['id' => $value['id']])}" target="_blank">{$value['goods_name']}</a></div>
+			<div class="youhui">市场价：{$value['market_price']}</div>
+			<div class="jiage">本店价：{$value['our_price']}</div>
+		</div>
+		{/foreach}
+		<div class="clear"></div>
+	</div>
+	<div class="main center mb20">				
+		<div class="clear"></div>
+	</div>
+</div>	
+
+{/block}

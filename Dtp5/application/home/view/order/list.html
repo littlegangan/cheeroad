@@ -1,0 +1,63 @@
+{extend name="../application/home/view/layout.html" /}
+
+{block name="content"}
+
+<div class="grzxbj">
+		<div class="selfinfo center">
+		<div class="lfnav fl">
+			<div class="ddzx">订单中心</div>
+			<div class="subddzx">
+				<ul>
+					<li><a href="" style="color:#ff6700;font-weight:bold;">我的订单</a></li>
+					<li><a href="">意外保</a></li>
+					<li><a href="">团购订单</a></li>
+					<li><a href="">评价晒单</a></li>
+				</ul>
+			</div>
+			<div class="ddzx">个人中心</div>
+			<div class="subddzx">
+				<ul>
+					<li><a href="{:url('member/selfinfo')}">我的个人中心</a></li>
+					<li><a href="">消息通知</a></li>
+					<li><a href="">优惠券</a></li>
+					<li><a href="">收货地址</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="rtcont fr">
+			<div class="ddzxbt">交易订单</div>
+			{foreach $orderList as $value}
+			<div class="ddxq">
+				<div class="fl goods-cover"><img src="__root__/{$value['order_details'][0]['goods_cover']}" style="width: 80px; height: 80px">
+				</div>
+				<!-- <div class="fl">订单号:{$value['order_sn']}</div> -->
+				<div class="ztxx fr">
+					<ul>
+						<li>发货状态：
+							{if $value['send_status'] == 0}未发货
+							{elseif $value['send_status'] == 1}已发货
+							{elseif $value['send_status'] == 2}派送中
+							{else /}已送达
+							{/if}
+
+						</li>
+						<li>商品单价：{$value['order_details'][0]['per_price']}</li>
+						<li>数量：{$value['order_details'][0]['nums']}</li>
+						<li>{$value['order_details'][0]['spec_desc']}</li>
+						<li>总价：{$value['order_details'][0]['total_price']}</li>
+						<li>2017/05/20 13:30</li>
+
+						<!-- <li><a href="">订单详情></a></li> -->
+						<div class="clear"></div>
+					</ul>
+				</div>
+				<div class="dingdanhao">订单号：{$value['order_sn']}</div>
+				<div class="clear"></div>
+			</div>
+			{/foreach}
+		</div>
+		<div class="clear"></div>
+		</div>
+	</div>
+
+{/block}

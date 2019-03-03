@@ -1,0 +1,150 @@
+{extend name="../application/home/view/layout.html" /}
+
+{block name="content"}
+
+<!-- start banner_x -->
+<div class="banner_x center">
+	
+	<div class="wdgwc fl ml40">我的购物车</div>
+	<div class="wxts fl ml20">温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</div>
+	
+	<div class="clear"></div>
+</div>
+<div class="xiantiao"></div>
+<form action="{:url('order/createOrder')}" method="post">
+<div class="gwcxqbj">
+	<div class="gwcxd center">
+		<div class="top2 center">
+			<div class="sub_top fl">
+				<input type="checkbox" id="selectAll" title="全选" />
+			</div>
+			<div class="sub_top fl">商品名称</div>
+			<div class="sub_top fl">单价</div>
+			<div class="sub_top fl">数量</div>
+			<div class="sub_top fl">小计</div>
+			<div class="sub_top fr">操作</div>
+			<div class="clear"></div>
+		</div>
+
+		{foreach $cartList as $value}
+
+		<div class="content2 center">
+			<div class="sub_content fl ">
+				<input type="checkbox" name="items[]" value="{$value['id']}" />
+			</div>
+			<div class="sub_content fl"><img src="__root__{$value['goods_cover']}" width="80" height="80"></div>
+			<div class="sub_content fl ft21">{$value['spec_desc']}</div>
+			<div class="sub_content fl ">{$value['per_price']}</div>
+			<div class="sub_content fl">
+				<input class="shuliang" type="number" value="{$value['nums']}" step="1" min="1" >
+			</div>
+			<div class="sub_content fl total-price">{$value['total_price']}</div>
+			<div class="sub_content fl"><a href="">×</a></div>
+			<div class="clear"></div>
+		</div>
+		
+		{/foreach}
+
+	</div>
+	<div class="jiesuandan mt20 center">
+		<div class="tishi fl ml20">
+			<ul>
+				<li><a href="./liebiao.html">继续购物</a></li>
+				<li>|</li>
+				<li>已选择<span class="selected">0</span>件</li>
+				<div class="clear"></div>
+			</ul>
+		</div>
+		<div class="jiesuan fr">
+			<div class="jiesuanjiage fl">合计（不含运费）：<span>0.00</span>元</div>
+			<input type="hidden" id="totalPriceInput" name="totalPrice" value="">
+			<div class="jsanniu fr"><input class="jsan" type="submit" value="去结算"/></div>
+			<div class="clear"></div>
+		</div>
+		<div class="clear"></div>
+	</div>
+	
+</div>
+</form>
+{/block}
+
+{block name="js"}
+
+<script>
+
+	$(function(){
+
+		$('#selectAll').click(function(){
+
+			$('.sub_content :checkbox').prop('checked', $(this).is(":checked"));
+
+			//获取子级复选框的个数
+			var len = $('.sub_content :checkbox:checked').length;
+
+			$('.selected').text(len);
+			getTotalPrice();
+
+		})
+
+		$('.sub_content :checkbox').click(function(){
+
+			var len = $('.sub_content :checkbox:checked').length;
+			$('.selected').text(len);
+			var totalLen = $('.sub_content :checkbox').length;
+
+			if(len == totalLen){
+
+				$('#selectAll').prop('checked', true);
+
+			}else{
+				$('#selectAll').prop('checked', false);
+			}
+
+			getTotalPrice();
+
+		})
+
+
+		//计算所有已勾选的商品的总价格
+		function getTotalPrice(){
+
+			var totalPrice = 0.00;
+
+			$('.sub_content :checkbox:checked').each(function(i, obj){
+
+				totalPrice += parseFloat($(obj).parent().siblings('.total-price').text());
+
+			})
+
+			$('.jiesuanjiage span').text(totalPrice);
+			$('#totalPriceInput').val(totalPrice);
+
+		}
+
+		//结算
+		$('.jsan').click(function(){
+
+			var len = $('.sub_content :checkbox:checked').length;
+			// alert(len); return false;
+			if(len <= 0){
+				layer.msg('请至少选择一件商品');
+				return false;
+			}else{
+				$('form').submit();
+			}
+
+
+		})
+
+
+	})
+
+
+
+</script>
+
+
+{/block}
+
+	
+
